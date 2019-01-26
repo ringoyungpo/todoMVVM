@@ -9,8 +9,17 @@
              v-model="newTodo"
              @keyup.enter="addTodo">
     </header>
-    <p>{{newTodo}}</p>
-    <p>{{todos}}</p>
+    <section class="main"
+             v-show="todos.length"
+             v-cloak>
+      <ul class="todo-list">
+        <li v-for="(todo, index) in todos"
+            class="todo"
+            :key="index">
+          {{todo}}
+        </li>
+      </ul>
+    </section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="http://ringoyungpo.github.io">Ringo Yungpo Kao</a></p>
