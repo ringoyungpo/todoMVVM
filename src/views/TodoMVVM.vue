@@ -16,7 +16,14 @@
         <li v-for="(todo, index) in todos"
             class="todo"
             :key="index">
-          {{todo}}
+          <div class="view">
+            <input class="toggle"
+                   type="checkbox"
+                   v-model="todo.completed">
+            <label>{{ todo.title }}</label>
+            <button class="destroy"
+                    @click="removeTodo(index)"></button>
+          </div>
         </li>
       </ul>
     </section>
@@ -47,6 +54,10 @@ export default class TodoMVVM extends Vue {
     this.todos.push(new Todo(value))
     this.newTodoTitle = ''
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
+  }
+
+  private removeTodo(index: number) {
+    this.todos.splice(index, 1)
   }
 }
 </script>
