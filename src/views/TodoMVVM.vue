@@ -6,7 +6,7 @@
              autofocus
              autocomplete="off"
              placeholder="What needs to be done?"
-             v-model="newTodo"
+             v-model="newTodoTitle"
              @keyup.enter="addTodo">
     </header>
     <section class="main"
@@ -30,23 +30,22 @@
 
 <script lang="ts">
 import { Component, Provide, Vue } from 'vue-property-decorator'
+import Todo from '../model/Todo'
 
 const STORAGE_KEY = 'todos-vuejs-3.0'
 
 @Component({})
 export default class TodoMVVM extends Vue {
-  @Provide() private newTodo: string = ''
-  @Provide() private todos: string[] = JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || '[]'
-  )
+  @Provide() private newTodoTitle: string = ''
+  @Provide() private todos: Todo[] = []
 
   private addTodo() {
-    const value = this.newTodo && this.newTodo.trim()
+    const value = this.newTodoTitle && this.newTodoTitle.trim()
     if (!value) {
       return
     }
-    this.todos.push(value)
-    this.newTodo = ''
+    this.todos.push(new Todo(value))
+    this.newTodoTitle = ''
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
   }
 }
