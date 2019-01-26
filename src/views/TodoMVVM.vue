@@ -22,10 +22,21 @@
 <script lang="ts">
 import { Component, Provide, Vue } from 'vue-property-decorator'
 
+const STORAGE_KEY = 'todos-vuejs-3.0'
+
+class TodoStorage {
+  static fetch(): string[] {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  }
+  static save(todos: string[]) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+  }
+}
+
 @Component({})
 export default class TodoMVVM extends Vue {
   @Provide() private newTodo: string = ''
-  @Provide() private todos: string[] = []
+  @Provide() private todos: string[] = TodoStorage.fetch()
 
   private addTodo() {
     const value = this.newTodo && this.newTodo.trim()
@@ -34,6 +45,7 @@ export default class TodoMVVM extends Vue {
     }
     this.todos.push(value)
     this.newTodo = ''
+    TodoStorage.save(this.todos)
   }
 }
 </script>
