@@ -25,10 +25,10 @@ import { Component, Provide, Vue } from 'vue-property-decorator'
 const STORAGE_KEY = 'todos-vuejs-3.0'
 
 class TodoStorage {
-  static fetch(): string[] {
+  public static fetch(): string[] {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
   }
-  static save(todos: string[]) {
+  public static save(todos: string[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
   }
 }
