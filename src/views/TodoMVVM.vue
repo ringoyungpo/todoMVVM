@@ -47,7 +47,7 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
 
 @Component({
   directives: {
-    'todo-focus'(el, binding) {
+    'todo-focus'(el: HTMLElement, binding) {
       if (binding.value) {
         el.focus()
       }
