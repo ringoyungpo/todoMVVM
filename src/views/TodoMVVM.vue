@@ -20,10 +20,14 @@
             <input class="toggle"
                    type="checkbox"
                    v-model="todo.completed">
-            <label>{{ todo.title }}</label>
+            <label @dblclick="editTodo(index)">{{ todo.title }}</label>
             <button class="destroy"
                     @click="removeTodo(index)"></button>
           </div>
+          <input class="edit"
+                 type="text"
+                 v-model="todo.title"
+                 v-todo-focus="index == editingIndex">
         </li>
       </ul>
     </section>
@@ -37,13 +41,22 @@
 
 <script lang="ts">
 import { Component, Provide, Vue } from 'vue-property-decorator'
-import Todo from '../model/Todo'
+import Todo from '../models/Todo'
 
 const STORAGE_KEY = 'todos-vuejs-3.0'
 
-@Component({})
+@Component({
+  directives: {
+    'todo-focus'(el, binding) {
+      if (binding.value) {
+        el.focus()
+      }
+    }
+  }
+})
 export default class TodoMVVM extends Vue {
   @Provide() private newTodoTitle: string = ''
+  @Provide() private editingIndex: number | null = null
   @Provide() private todos: Todo[] = []
 
   private addTodo() {
@@ -58,6 +71,10 @@ export default class TodoMVVM extends Vue {
 
   private removeTodo(index: number) {
     this.todos.splice(index, 1)
+  }
+
+  private editTodo(index: number) {
+    this.editingIndex = index
   }
 }
 </script>
