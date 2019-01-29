@@ -57,7 +57,9 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
 export default class TodoMVVM extends Vue {
   @Provide() private newTodoTitle: string = ''
   @Provide() private editingIndex: number | null = null
-  @Provide() private todos: Todo[] = []
+  @Provide() private todos: Todo[] = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || '[]'
+  )
 
   private addTodo() {
     const value = this.newTodoTitle && this.newTodoTitle.trim()
