@@ -27,7 +27,9 @@
           <input class="edit"
                  type="text"
                  v-model="todo.title"
-                 v-todo-focus="index == editingIndex">
+                 v-todo-focus="index == editingIndex"
+                 @blur="doneEdit(index)"
+                 @keyup.enter="doneEdit(index)">
         </li>
       </ul>
     </section>
@@ -78,6 +80,22 @@ export default class TodoMVVM extends Vue {
   private editTodo(index: number) {
     this.editingIndex = index
   }
+
+  private doneEdit(index: number) {
+    if (this.editingIndex != null) {
+      window.console.log(this.todos[this.editingIndex])
+      if (!this.todos[this.editingIndex]) {
+        return
+      }
+      this.todos[this.editingIndex].title = this.todos[
+        this.editingIndex
+      ].title.trim()
+      if (!this.todos[this.editingIndex].title) {
+        this.todos.splice(index, 1)
+      }
+      this.editingIndex = null
+    }
+    return
+  }
 }
 </script>
-
