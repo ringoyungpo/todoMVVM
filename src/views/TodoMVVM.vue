@@ -84,9 +84,6 @@ export default class TodoMVVM extends Vue {
   private doneEdit(index: number) {
     if (this.editingIndex != null) {
       window.console.log(this.todos[this.editingIndex])
-      if (!this.todos[this.editingIndex]) {
-        return
-      }
       this.todos[this.editingIndex].title = this.todos[
         this.editingIndex
       ].title.trim()
@@ -94,6 +91,7 @@ export default class TodoMVVM extends Vue {
         this.todos.splice(index, 1)
       }
       this.editingIndex = null
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
     }
     return
   }
