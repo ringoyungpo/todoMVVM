@@ -8,7 +8,14 @@
                autocomplete="off"
                placeholder="What needs to be done?"
                v-model="newTodoTitle"
-               @keyup.enter="addTodo" />
+               @keyup.enter="()=>{
+                  const value = newTodoTitle && newTodoTitle.trim()
+                  if (!value) {
+                    return
+                  }
+                  todos.push(new Todo(value))
+                  newTodoTitle = null
+                }" />
       </header>
       <article v-show="todos.length"
                v-cloak>
@@ -21,16 +28,16 @@
               <input class="toggle"
                      type="checkbox"
                      v-model="todo.completed" />
-              <label @dblclick="editTodo(index)">{{ todo.title }}</label>
+              <label @dblclick="()=>editingIndex = index">{{ todo.title }}</label>
               <button class="destroy"
-                      @click="removeTodo(index)" />
+                      @click="()=>todos.splice(index, 1)" />
             </section>
             <input class="edit"
                    type="text"
                    v-model="todo.title"
                    v-todo-focus="index === editingIndex"
-                   @blur="doneEdit()"
-                   @keyup.enter="doneEdit()" />
+                   @blur="()=>editingIndex = null"
+                   @keyup.enter="()=>editingIndex = null" />
           </li>
         </ul>
       </article>
@@ -44,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Provide, Vue } from 'vue-property-decorator'
+import { Component, Provide, Vue, Watch } from 'vue-property-decorator'
 import Todo from '../models/Todo'
 
 const STORAGE_KEY = 'todos-vuejs-3.0'
@@ -59,33 +66,15 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
   }
 })
 export default class TodoMVVM extends Vue {
-  @Provide() private newTodoTitle: string = ''
+  @Provide() private newTodoTitle: string | null = null
   @Provide() private editingIndex: number | null = null
+  @Provide() private Todo: any = Todo
   @Provide() private todos: Todo[] = JSON.parse(
     localStorage.getItem(STORAGE_KEY) || '[]'
   )
 
-  private addTodo() {
-    const value = this.newTodoTitle && this.newTodoTitle.trim()
-    if (!value) {
-      return
-    }
-    this.todos.push(new Todo(value))
-    this.newTodoTitle = ''
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
-  }
-
-  private removeTodo(index: number) {
-    this.todos.splice(index, 1)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
-  }
-
-  private editTodo(index: number) {
-    this.editingIndex = index
-  }
-
-  private doneEdit() {
-    this.editingIndex = null
+  @Watch('todos', { immediate: true, deep: true })
+  private onTodosChanged(val: Todo[], oldVal: Todo[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
   }
 }
