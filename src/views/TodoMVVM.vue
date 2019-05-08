@@ -1,44 +1,46 @@
 <template>
-  <section class="todoapp">
-    <header class="header">
-      <h1>todos</h1>
-      <input class="new-todo"
-             autofocus
-             autocomplete="off"
-             placeholder="What needs to be done?"
-             v-model="newTodoTitle"
-             @keyup.enter="addTodo">
-    </header>
-    <section class="main"
-             v-show="todos.length"
-             v-cloak>
-      <ul class="todo-list">
-        <li v-for="(todo, index) in todos"
-            class="todo"
-            :key="index">
-          <div class="view">
-            <input class="toggle"
-                   type="checkbox"
-                   v-model="todo.completed">
-            <label @dblclick="editTodo(index)">{{ todo.title }}</label>
-            <button class="destroy"
-                    @click="removeTodo(index)"></button>
-          </div>
-          <input class="edit"
-                 type="text"
-                 v-model="todo.title"
-                 v-todo-focus="index === editingIndex"
-                 @blur="doneEdit()"
-                 @keyup.enter="doneEdit()">
-        </li>
-      </ul>
+  <main>
+    <section class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo"
+               autofocus
+               autocomplete="off"
+               placeholder="What needs to be done?"
+               v-model="newTodoTitle"
+               @keyup.enter="addTodo">
+      </header>
+      <section class="main"
+               v-show="todos.length"
+               v-cloak>
+        <ul class="todo-list">
+          <li v-for="(todo, index) in todos"
+              class="todo"
+              :key="index">
+            <div class="view">
+              <input class="toggle"
+                     type="checkbox"
+                     v-model="todo.completed">
+              <label @dblclick="editTodo(index)">{{ todo.title }}</label>
+              <button class="destroy"
+                      @click="removeTodo(index)"></button>
+            </div>
+            <input class="edit"
+                   type="text"
+                   v-model="todo.title"
+                   v-todo-focus="index === editingIndex"
+                   @blur="doneEdit()"
+                   @keyup.enter="doneEdit()">
+          </li>
+        </ul>
+      </section>
     </section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="http://ringoyungpo.github.io">Ringo Yungpo Kao</a></p>
       <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
-  </section>
+  </main>
 </template>
 
 <script lang="ts">
