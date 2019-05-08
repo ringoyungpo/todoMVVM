@@ -16,7 +16,8 @@
         <ul class="todo-list">
           <li v-for="(todo, index) in todos"
               class="todo"
-              :key="index">
+              :key="index"
+              :class="{ completed: todo.completed, editing: index === editingIndex }">
             <div class="view">
               <input class="toggle"
                      type="checkbox"
