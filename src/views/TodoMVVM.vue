@@ -28,7 +28,13 @@
               <input class="toggle"
                      type="checkbox"
                      v-model="todo.completed" />
-              <label @dblclick="()=>editingIndex = index">{{ todo.title }}</label>
+              <label @dblclick="()=>{
+                editingIndex = index
+                const {title} = todo
+                beforeEditCache = title
+              }">
+                {{ todo.title }}
+              </label>
               <button class="destroy"
                       @click="()=>todos.splice(index, 1)" />
             </section>
@@ -37,7 +43,8 @@
                    v-model="todo.title"
                    v-todo-focus="index === editingIndex"
                    @blur="()=>editingIndex = null"
-                   @keyup.enter="()=>editingIndex = null" />
+                   @keyup.enter="()=>editingIndex = null"
+                   @keyup.esc="()=>{todo.title = beforeEditCache;editingIndex = null}" />
           </li>
         </ul>
       </article>
@@ -67,6 +74,7 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
 })
 export default class TodoMVVM extends Vue {
   @Provide() private newTodoTitle: string | null = null
+  @Provide() private beforeEditCache: string | null = null
   @Provide() private editingIndex: number | null = null
   @Provide() private Todo: any = Todo
   @Provide() private todos: Todo[] = JSON.parse(
