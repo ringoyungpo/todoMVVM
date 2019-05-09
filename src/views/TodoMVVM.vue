@@ -29,8 +29,8 @@
         </label>
         <ul class="todo-list">
           <li v-for="(todo, index) in {
-                active: todos.filter((todo)=>!todo.completed),
-                completed: todos.filter((todo)=>todo.completed)
+                active: activeTodos,
+                completed: completedTodos
               }[$route.params.visibility] || todos"
               class="todo"
               :key="index"
@@ -63,8 +63,8 @@
               v-show="todos.length"
               v-cloak>
         <span class="todo-count">
-          <strong>{{ todos.filter((todo)=>!todo.completed).length }}</strong> {{
-          todos.filter((todo)=>!todo.completed).length === 1?'item': 'items' }} left
+          <strong>{{ activeTodos.length }}</strong> {{
+          activeTodos.length === 1?'item': 'items' }} left
         </span>
         <ul class="filters">
           <li><a :href="$router.resolve({name: 'home', params: {visibility: 'all'}}).href"
@@ -75,8 +75,8 @@
                :class="{ selected: visibility === 'completed' }">Completed</a></li>
         </ul>
         <button class="clear-completed"
-                @click="()=>{todos = todos.filter((todo)=>!todo.completed)}"
-                v-show="todos.filter((todo)=>todo.completed).length>0">
+                @click="()=>{todos = activeTodos}"
+                v-show="completedTodos.length>0">
           Clear completed
         </button>
       </footer>
@@ -114,8 +114,16 @@ export default class TodoMVVM extends Vue {
     localStorage.getItem(STORAGE_KEY) || '[]'
   )
 
+  public get activeTodos(): Todo[] {
+    return this.todos.filter(todo => !todo.completed)
+  }
+
+  public get completedTodos(): Todo[] {
+    return this.todos.filter(todo => todo.completed)
+  }
+
   public get allDone(): boolean {
-    return this.todos.filter(todo => !todo.completed).length === 0
+    return this.activeTodos.length === 0
   }
 
   public set allDone(switcher: boolean) {
