@@ -17,8 +17,16 @@
                   newTodoTitle = null
                 }" />
       </header>
-      <article v-show="todos.length"
+      <article class="main"
+               v-show="todos.length"
                v-cloak>
+        <input id="toggle-all"
+               class="toggle-all"
+               type="checkbox"
+               v-model="allDone" />
+        <label for="toggle-all">
+          Mark all as complete
+        </label>
         <ul class="todo-list">
           <li v-for="(todo, index) in {
                 active: todos.filter((todo)=>!todo.completed),
@@ -105,6 +113,19 @@ export default class TodoMVVM extends Vue {
   @Provide() private todos: Todo[] = JSON.parse(
     localStorage.getItem(STORAGE_KEY) || '[]'
   )
+
+  public get allDone(): boolean {
+    return this.todos.filter(todo => !todo.completed).length === 0
+  }
+
+  public set allDone(switcher: boolean) {
+    this.todos = this.todos.map(todo => {
+      return {
+        ...todo,
+        completed: switcher
+      }
+    })
+  }
 
   @Watch('todos', { immediate: true, deep: true })
   private onTodosChanged(val: Todo[], oldVal: Todo[]) {
