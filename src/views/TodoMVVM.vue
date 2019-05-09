@@ -20,7 +20,10 @@
       <article v-show="todos.length"
                v-cloak>
         <ul class="todo-list">
-          <li v-for="(todo, index) in todos"
+          <li v-for="(todo, index) in {
+                active: todos.filter((todo)=>!todo.completed),
+                completed: todos.filter((todo)=>todo.completed)
+              }[$route.params.visibility] || todos"
               class="todo"
               :key="index"
               :class="{ completed: todo.completed, editing: index === editingIndex }">
@@ -48,6 +51,27 @@
           </li>
         </ul>
       </article>
+      <footer class="footer"
+              v-show="todos.length"
+              v-cloak>
+        <span class="todo-count">
+          <strong>{{ todos.filter((todo)=>!todo.completed).length }}</strong> {{
+          todos.filter((todo)=>!todo.completed).length === 1?'item': 'items' }} left
+        </span>
+        <ul class="filters">
+          <li><a :href="$router.resolve({name: 'home', params: {visibility: 'all'}}).href"
+               :class="{ selected: visibility === 'all' }">All</a></li>
+          <li><a :href="$router.resolve({name: 'home', params: {visibility: 'active'}}).href"
+               :class="{ selected: visibility === 'active' }">Active</a></li>
+          <li><a :href="$router.resolve({name: 'home', params: {visibility: 'completed'}}).href"
+               :class="{ selected: visibility === 'completed' }">Completed</a></li>
+        </ul>
+        <button class="clear-completed"
+                @click="()=>{todos = todos.filter((todo)=>!todo.completed)}"
+                v-show="todos.filter((todo)=>todo.completed).length>0">
+          Clear completed
+        </button>
+      </footer>
     </main>
     <footer class="info">
       <p>Double-click to edit a todo</p>
@@ -76,6 +100,7 @@ export default class TodoMVVM extends Vue {
   @Provide() private newTodoTitle: string | null = null
   @Provide() private beforeEditCache: string | null = null
   @Provide() private editingIndex: number | null = null
+  @Provide() private visibility?: string | null = null
   @Provide() private Todo: any = Todo
   @Provide() private todos: Todo[] = JSON.parse(
     localStorage.getItem(STORAGE_KEY) || '[]'
@@ -84,6 +109,17 @@ export default class TodoMVVM extends Vue {
   @Watch('todos', { immediate: true, deep: true })
   private onTodosChanged(val: Todo[], oldVal: Todo[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
+  }
+
+  private mounted() {
+    this.visibility = this.$route.params.visibility
+    if (
+      this.visibility &&
+      !['all', 'active', 'completed'].includes(this.visibility)
+    ) {
+      this.$router.push('/')
+      window.console.log('jump')
+    }
   }
 }
 </script>
