@@ -53,8 +53,8 @@
                    type="text"
                    v-model="todo.title"
                    v-todo-focus="index === editingIndex"
-                   @blur="()=>editingIndex = null"
-                   @keyup.enter="()=>editingIndex = null"
+                   @blur="doneEdit(todo, index)"
+                   @keyup.enter="doneEdit(todo, index)"
                    @keyup.esc="()=>{todo.title = beforeEditCache;editingIndex = null}" />
           </li>
         </ul>
@@ -138,6 +138,15 @@ export default class TodoMVVM extends Vue {
   @Watch('todos', { immediate: true, deep: true })
   private onTodosChanged(val: Todo[], oldVal: Todo[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
+  }
+
+  private doneEdit(todo: Todo, index: number) {
+    todo.title = todo.title.trim()
+    const { title } = todo
+    if (!title) {
+      this.todos.splice(index, 1)
+    }
+    this.editingIndex = null
   }
 
   private mounted() {
