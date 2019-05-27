@@ -41,8 +41,8 @@
                      v-model="todo.completed" />
               <label @dblclick="()=>{
                 editingIndex = index
-                const {title} = todo
-                beforeEditCache = title
+                const {title, completed} = todo
+                editingTodo = new Todo(title, completed)
               }">
                 {{ todo.title }}
               </label>
@@ -51,11 +51,11 @@
             </section>
             <input class="edit"
                    type="text"
-                   v-model="todo.title"
+                   v-model="editingTodo.title"
                    v-todo-focus="index === editingIndex"
-                   @blur="doneEdit(todo, index)"
-                   @keyup.enter="doneEdit(todo, index)"
-                   @keyup.esc="()=>{todo.title = beforeEditCache;editingIndex = null}" />
+                   @blur="doneEdit(editingTodo, index)"
+                   @keyup.enter="doneEdit(editingTodo, index)"
+                   @keyup.esc="()=>{editingIndex = null}" />
           </li>
         </ul>
       </article>
@@ -106,7 +106,7 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
 })
 export default class TodoMVVM extends Vue {
   @Provide() private newTodoTitle: string | null = null
-  @Provide() private beforeEditCache: string | null = null
+  @Provide() private editingTodo?: Todo = new Todo('')
   @Provide() private editingIndex: number | null = null
   @Provide() private visibility?: string | null = null
   @Provide() private Todo: any = Todo
@@ -140,11 +140,12 @@ export default class TodoMVVM extends Vue {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
   }
 
-  private doneEdit(todo: Todo, index: number) {
-    todo.title = todo.title.trim()
-    const { title } = todo
-    if (!title) {
+  private doneEdit(editingTodo: Todo, index: number) {
+    editingTodo.title = editingTodo.title.trim()
+    if (!editingTodo.title) {
       this.todos.splice(index, 1)
+    } else {
+      this.todos.splice(index, 1, editingTodo)
     }
     this.editingIndex = null
   }
