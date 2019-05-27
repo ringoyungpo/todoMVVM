@@ -7,14 +7,14 @@
                autofocus
                autocomplete="off"
                placeholder="What needs to be done?"
-               v-model="newTodoTitle"
+               v-model="newTodo.title"
                @keyup.enter="()=>{
-                  const value = newTodoTitle && newTodoTitle.trim()
-                  if (!value) {
+                  newTodo.title = newTodo.title.trim()
+                  if (!newTodo.title) {
                     return
                   }
-                  todos.push(new Todo(value))
-                  newTodoTitle = null
+                  todos.push(newTodo)
+                  newTodo = new Todo('')
                 }" />
       </header>
       <article class="main"
@@ -105,7 +105,7 @@ const STORAGE_KEY = 'todos-vuejs-3.0'
   }
 })
 export default class TodoMVVM extends Vue {
-  @Provide() private newTodoTitle: string | null = null
+  @Provide() private newTodo?: Todo = new Todo('')
   @Provide() private editingTodo?: Todo = new Todo('')
   @Provide() private editingIndex: number | null = null
   @Provide() private visibility?: string | null = null
