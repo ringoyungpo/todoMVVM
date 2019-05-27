@@ -28,14 +28,16 @@
           Mark all as complete
         </label>
         <ul class="todo-list">
-          <li v-for="(todo, index) in {
-                active: activeTodos,
-                completed: completedTodos
-              }[$route.params.visibility] || todos"
+          <li v-for="(todo, index) in  todos"
               class="todo"
               :key="index"
               :class="{ completed: todo.completed, editing: index === editingIndex }">
-            <section class="view">
+            <section class="view"
+                     v-if="visibility?{
+                    active: !todo.completed,
+                    completed: todo.completed,
+                    all: true
+                  }[visibility]:true">
               <input class="toggle"
                      type="checkbox"
                      v-model="todo.completed" />
